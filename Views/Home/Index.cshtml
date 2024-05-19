@@ -1,0 +1,82 @@
+﻿@model IEnumerable<BookStore.Book>
+
+@{
+    ViewData["Title"] = "Book List";
+}
+
+<h2>Book List</h2>
+
+<!-- ฟอร์มสำหรับการค้นหา -->
+<form method="get" action="/Home/Search">
+    <input type="text" name="title" placeholder="Search by title">
+    <select name="category">
+        <option value="">Select category</option>
+        <option value="Science Fiction">Science Fiction</option>
+        <option value="Fantasy">Fantasy</option>
+        <option value="Non-Fiction">Non-Fiction</option>
+        <!-- เพิ่มหมวดหมู่อื่น ๆ ตามต้องการ -->
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+<!-- ฟอร์มสำหรับการเพิ่มหนังสือ -->
+<form method="post" action="/Home/AddBook">
+    <input type="text" name="title" placeholder="Title" required>
+    <input type="text" name="author" placeholder="Author" required>
+    <input type="number" name="categoryId" placeholder="Category ID" required>
+    <button type="submit">Add Book</button>
+</form>
+
+<!-- ฟอร์มสำหรับการลบหนังสือ -->
+<form method="post" action="/Home/DeleteBook">
+    <input type="number" name="id" placeholder="Book ID" required>
+    <button type="submit">Delete Book</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+                <td>@book.Category.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- ส่วนสำหรับการแสดงสรุป -->
+<div id="summary">
+    <!-- Display summary here -->
+</div>
+
+<script>
+    function displaySummary(summary) {
+        const summaryDiv = document.getElementById('summary');
+        let summaryHtml = '<ul>';
+
+        summary.forEach(item => {
+            summaryHtml += `<li>${item.category}: ${item.count} books</li>`;
+        });
+
+        summaryHtml += '</ul>';
+        summaryDiv.innerHTML = summaryHtml;
+    }
+
+    // Fetch summary data and display
+    fetch('/Home/Summary')
+        .then(response => response.json())
+        .then(data => {
+            displaySummary(data);
+        });
+</script>
+
+
